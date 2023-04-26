@@ -1,0 +1,27 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: HumanAccountFactory
+    network: mumbai
+    source:
+      address: ''
+      abi: HumanAccountFactory
+      startBlock: 34813309
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - DeployedHumanAccount
+        - OwnershipTransferred
+      abis:
+        - name: HumanAccountFactory
+          file: ./abis/HumanAccountFactory.json
+      eventHandlers:
+        - event: DeployedHumanAccount(address,string,address)
+          handler: handleDeployedHumanAccount
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/human-account-factory.ts
