@@ -21,6 +21,7 @@
     "check-gas-reports": "./scripts/check-gas-reports",
     "runop": "hardhat run src/runop.ts ",
     "runop-goerli": "AA_URL=https://account-abstraction-goerli.nethermind.io yarn runop --network goerli",
+    "runop-human": "hardhat run src/runop-human.ts --network goerli",
     "runop3": "hardhat run src/runop3.ts "
   },
   "keywords": [],
@@ -58,6 +59,7 @@
     "@thehubbleproject/bls": "^0.5.1",
     "@typechain/hardhat": "^2.3.0",
     "@types/mocha": "^9.0.0",
+    "dotenv": "^16.0.3",
     "ethereumjs-util": "^7.1.0",
     "ethereumjs-wallet": "^1.0.1",
     "hardhat-deploy": "^0.11.23",

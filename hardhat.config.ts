@@ -1,3 +1,4 @@
+import dotenv from 'dotenv'
 import '@nomiclabs/hardhat-waffle'
 import '@typechain/hardhat'
 import { HardhatUserConfig } from 'hardhat/config'
@@ -7,6 +8,8 @@ import '@nomiclabs/hardhat-etherscan'
 import 'solidity-coverage'
 
 import * as fs from 'fs'
+
+dotenv.config()
 
 const mnemonicFileName = process.env.MNEMONIC_FILE ?? `${process.env.HOME}/.secret/testnet-mnemonic.txt`
 let mnemonic = 'test '.repeat(11) + 'junk'
@@ -37,14 +40,17 @@ const optimizedComilerSettings = {
 
 const config: HardhatUserConfig = {
   solidity: {
-    compilers: [{
-      version: '0.8.15',
-      settings: {
-        optimizer: { enabled: true, runs: 1000000 }
+    compilers: [
+      {
+        version: '0.8.15',
+        settings: {
+          optimizer: { enabled: true, runs: 1000000 }
+        }
       }
-    }],
+    ],
     overrides: {
       'contracts/core/EntryPoint.sol': optimizedComilerSettings,
+      'contracts/humanwallet/HumanAccount.sol': optimizedComilerSettings,
       'contracts/samples/SimpleAccount.sol': optimizedComilerSettings
     }
   },
@@ -52,9 +58,23 @@ const config: HardhatUserConfig = {
     dev: { url: 'http://localhost:8545' },
     // github action starts localgeth service, for gas calculations
     localgeth: { url: 'http://localgeth:8545' },
-    goerli: getNetwork('goerli'),
+    // goerli: getNetwork('goerli'),
+    goerli: {
+      url: process.env.GOERLI_URL ?? '',
+      accounts: { mnemonic: process.env.MNEMONIC ?? mnemonic }
+    },
     sepolia: getNetwork('sepolia'),
-    proxy: getNetwork1('http://localhost:8545')
+    proxy: getNetwork1('http://localhost:8545'),
+    mumbai: {
+      url: process.env.MUMBAI_URL ?? '',
+      accounts: { mnemonic: process.env.MNEMONIC ?? '' },
+      verify: {
+        etherscan: {
+          apiUrl: 'https://api-testnet.polygonscan.com',
+          apiKey: 'VXIS2PWMT67494Q33WK2CWH16367BC26Z1'
+        }
+      }
+    }
   },
   mocha: {
     timeout: 10000
@@ -63,7 +83,6 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY
   }
-
 }
 
 // coverage chokes on the "compilers" settings
